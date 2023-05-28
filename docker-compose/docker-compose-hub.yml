@@ -1,0 +1,84 @@
+version: "3.8"
+
+services:
+  auth_db:
+    image: postgres:12.2-alpine
+    container_name: "auth_db"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - fullstack
+    volumes:
+      - database_auth:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  auth:
+    image: jromankiew/auth
+    container_name: "auth-rest-api"
+    environment:
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "postgres"
+      DB_DB: "postgres"
+      DB_HOST: "auth_db"
+      DB_TABLE: "postgres"
+      DB_PORT: "5432"
+      SSL_MODE: "disable"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth_db
+    networks:
+      - fullstack
+
+  profile_db:
+    image: postgres:12.2-alpine
+    container_name: "profile_db"
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - fullstack
+    volumes:
+      - database_profile:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  profile:
+    image: jromankiew/profile
+    container_name: "profile-rest-api"
+    environment:
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "postgres"
+      DB_DB: "postgres"
+      DB_HOST: "profile_db"
+      DB_TABLE: "postgres"
+      DB_PORT: "5432"
+      SSL_MODE: "disable"
+    ports:
+      - "8081:8081"
+    depends_on:
+      - profile_db
+    networks:
+      - fullstack
+
+volumes:
+  database_auth:
+  database_profile:
+
+networks:
+  fullstack:
+    driver: bridge
