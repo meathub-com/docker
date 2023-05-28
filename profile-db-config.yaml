@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: profile-db-config
+data:
+  profile-db-url: profile-db-service
+  DB_DB: "postgres"
+  POSTGRES_DB: "postgres"
+  DB_HOST: "profile-db-service"
+  DB_TABLE: "postgres"
+  DB_PORT: "5432"
+  SSL_MODE: "disable"
