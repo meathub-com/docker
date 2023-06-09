@@ -27,6 +27,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  broker:
+    image: jromankiew/broker:latest
+    container_name: "broker-rest-api"
+    ports:
+      - "8000:8000"
+    networks:
+      - fullstack
 
   auth:
     image: jromankiew/auth:latest
